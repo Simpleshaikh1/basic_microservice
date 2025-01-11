@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
+	jwt "github.com/dgrijalva/jwt-go"
 	"log"
 	"net/http"
 	"os"
@@ -16,7 +16,9 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 
 func isAuthorized(endpoint func(http.ResponseWriter, *http.Request)) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header["Token"] != nil {
 
+		}
 	})
 }
 
