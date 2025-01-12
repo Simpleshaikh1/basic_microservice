@@ -17,7 +17,7 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 func isAuthorized(endpoint func(http.ResponseWriter, *http.Request)) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Header["Token"] != nil {
-			jwt.Parse(r.Header["Token"][0], func(token *jwt.Token) (interface{}, error) {
+			token, err := jwt.Parse(r.Header["Token"][0], func(token *jwt.Token) (interface{}, error) {
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 					return nil, fmt.Errorf("Invalid signing error")
 				}
@@ -33,9 +33,9 @@ func isAuthorized(endpoint func(http.ResponseWriter, *http.Request)) http.Handle
 				}
 				return MySigningKey, nil
 			})
-			//if err != nil {
-			//	fmt.Printf(w, err.Error())
-			//}
+			if err != nil {
+				fmt.Fprintf(w, err.Error())
+			}
 
 			if token.Valid {
 				endpoint(w, r)
@@ -49,10 +49,10 @@ func isAuthorized(endpoint func(http.ResponseWriter, *http.Request)) http.Handle
 
 func handleRequests() {
 	http.Handle("/", isAuthorized(homePage))
-	log.Fatal(http.ListenAndServe("9001", nil))
+	log.Fatal(http.ListenAndServe(":9000", nil))
 }
 
 func main() {
-	fmt.Printf("Starting server at port 9001\n")
+	fmt.Printf("Starting server at port 9000\n")
 	handleRequests()
 }
